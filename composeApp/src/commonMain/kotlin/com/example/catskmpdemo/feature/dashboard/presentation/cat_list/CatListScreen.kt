@@ -6,9 +6,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -41,7 +44,7 @@ fun CatListScreenRoot(
     CatListScreen(
         state = state,
         onAction = { action ->
-            when(action) {
+            when (action) {
                 is CatListAction.OnCatClick -> onCatClick(action.cat)
                 else -> Unit
             }
@@ -55,7 +58,10 @@ fun CatListScreen(
     state: CatListState,
     onAction: (CatListAction) -> Unit,
 ) {
-    Box(Modifier.fillMaxSize()) {
+    Box(
+        Modifier.fillMaxSize()
+            .padding(WindowInsets.safeDrawing.asPaddingValues())
+    ) {
         Column(Modifier.fillMaxSize()) {
             Row(
                 modifier = Modifier
@@ -96,7 +102,7 @@ fun CatListScreen(
                     .align(Alignment.BottomCenter)
                     .padding(8.dp)
             ) {
-                Snackbar { Text(msg.asString ()) }
+                Snackbar { Text(msg.asString()) }
             }
         }
         if (state.isLoading) {
@@ -130,7 +136,10 @@ private fun CatRow(
         )
         Column(Modifier.weight(1f)) {
             Text(text = "ID: ${cat.id}", style = MaterialTheme.typography.bodyLarge)
-            Text(text = "Size: ${cat.width}x${cat.height}", style = MaterialTheme.typography.bodySmall)
+            Text(
+                text = "Size: ${cat.width}x${cat.height}",
+                style = MaterialTheme.typography.bodySmall
+            )
             if (cat.breeds.isNotEmpty()) {
                 Text(
                     text = "Breeds: ${cat.breeds.joinToString { it.name }}",
