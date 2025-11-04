@@ -55,7 +55,10 @@ kotlin {
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
             implementation(libs.jetbrains.compose.navigation)
+            implementation(libs.androidx.material)
+
             api(libs.koin.core)
+
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

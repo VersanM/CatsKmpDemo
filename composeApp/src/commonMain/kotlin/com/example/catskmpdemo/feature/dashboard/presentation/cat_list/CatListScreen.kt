@@ -15,11 +15,12 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -58,6 +59,8 @@ fun CatListScreen(
     state: CatListState,
     onAction: (CatListAction) -> Unit,
 ) {
+    val pullToRefreshState = rememberPullToRefreshState()
+
     Box(
         Modifier.fillMaxSize()
             .padding(WindowInsets.safeDrawing.asPaddingValues())
@@ -71,26 +74,28 @@ fun CatListScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text("Cats", style = MaterialTheme.typography.headlineSmall)
-                Button(
-                    onClick = { onAction(CatListAction.OnRefresh) },
-                    enabled = !state.isLoading
-                ) { Text("Refresh") }
             }
             if (state.isLoading && state.cats.isEmpty()) {
                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator()
                 }
             } else {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                PullToRefreshBox(
+                    state = pullToRefreshState,
+                    isRefreshing = state.isLoading,
+                    onRefresh = { onAction(CatListAction.OnRefresh) },
                 ) {
-                    items(state.cats) { cat ->
-                        CatRow(
-                            cat = cat,
-                            onClick = { onAction(CatListAction.OnCatClick(cat)) }
-                        )
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        items(state.cats) { cat ->
+                            CatRow(
+                                cat = cat,
+                                onClick = { onAction(CatListAction.OnCatClick(cat)) }
+                            )
+                        }
                     }
                 }
             }
@@ -104,13 +109,6 @@ fun CatListScreen(
             ) {
                 Snackbar { Text(msg.asString()) }
             }
-        }
-        if (state.isLoading) {
-            CircularProgressIndicator(
-                Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(12.dp)
-            )
         }
     }
 }
