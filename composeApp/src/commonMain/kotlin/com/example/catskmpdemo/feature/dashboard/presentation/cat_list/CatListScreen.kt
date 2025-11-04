@@ -8,9 +8,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
@@ -21,6 +23,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -68,14 +71,13 @@ fun CatListScreen(
 ) {
     val pullToRefreshState = rememberPullToRefreshState()
 
-    Box(
-        Modifier.fillMaxSize()
-            .padding(WindowInsets.safeDrawing.asPaddingValues())
-    ) {
-        Column(Modifier.fillMaxSize()) {
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(WindowInsets.safeDrawing.only(WindowInsetsSides.Top).asPaddingValues())
                     .padding(horizontal = 16.dp, vertical = 12.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
@@ -85,41 +87,49 @@ fun CatListScreen(
                     style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold)
                 )
             }
-
-            if (state.isLoading && state.cats.isEmpty()) {
-                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
-                }
-            } else {
-                PullToRefreshBox(
-                    state = pullToRefreshState,
-                    isRefreshing = state.isLoading,
-                    onRefresh = { onAction(CatListAction.OnRefresh) },
-                ) {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(12.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
+        }
+    ) { innerPadding ->
+        Box(
+            Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
+            Column(Modifier.fillMaxSize()) {
+                if (state.isLoading && state.cats.isEmpty()) {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
+                } else {
+                    PullToRefreshBox(
+                        state = pullToRefreshState,
+                        isRefreshing = state.isLoading,
+                        onRefresh = { onAction(CatListAction.OnRefresh) },
                     ) {
-                        items(state.cats) { cat ->
-                            CatCard(
-                                cat = cat,
-                                onClick = { onAction(CatListAction.OnCatClick(cat)) }
-                            )
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize(),
+                            contentPadding = PaddingValues(12.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            items(state.cats) { cat ->
+                                CatCard(
+                                    cat = cat,
+                                    onClick = { onAction(CatListAction.OnCatClick(cat)) }
+                                )
+                            }
                         }
                     }
                 }
             }
-        }
 
-        state.errorMessage?.let { msg ->
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.BottomCenter)
-                    .padding(8.dp)
-            ) {
-                Snackbar { Text(msg.asString()) }
+            state.errorMessage?.let { msg ->
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.BottomCenter)
+                        .padding(8.dp)
+                ) {
+                    Snackbar { Text(msg.asString()) }
+                }
             }
         }
     }
