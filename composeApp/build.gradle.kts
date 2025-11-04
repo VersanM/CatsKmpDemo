@@ -36,6 +36,7 @@ kotlin {
             implementation(libs.ktor.client.okhttp)
             implementation(libs.koin.android)
             implementation(libs.koin.androidx.compose)
+            implementation(libs.androidx.material)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
@@ -55,7 +56,6 @@ kotlin {
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
             implementation(libs.jetbrains.compose.navigation)
-            implementation(libs.androidx.material)
 
             api(libs.koin.core)
 

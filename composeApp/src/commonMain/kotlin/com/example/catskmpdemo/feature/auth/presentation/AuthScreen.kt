@@ -21,6 +21,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import catskmpdemo.composeapp.generated.resources.Res
+import catskmpdemo.composeapp.generated.resources.email_label
+import catskmpdemo.composeapp.generated.resources.login_action
+import catskmpdemo.composeapp.generated.resources.login_title
+import catskmpdemo.composeapp.generated.resources.password_label
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun AuthScreenRoot(
@@ -56,18 +62,21 @@ fun AuthScreen(
                 .background(Color.White),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Text("Login", style = MaterialTheme.typography.headlineMedium)
+            Text(
+                stringResource(Res.string.login_title),
+                style = MaterialTheme.typography.headlineMedium
+            )
             TextField(
                 value = state.email,
                 onValueChange = { onAction(AuthAction.OnEmailChange(it)) },
-                label = { Text("Email") },
+                label = { Text(stringResource(Res.string.email_label)) },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
             TextField(
                 value = state.password,
                 onValueChange = { onAction(AuthAction.OnPasswordChange(it)) },
-                label = { Text("Password") },
+                label = { Text(stringResource(Res.string.password_label)) },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -82,7 +91,7 @@ fun AuthScreen(
                         strokeWidth = 2.dp
                     )
                 } else {
-                    Text("Login")
+                    Text(stringResource(Res.string.login_action))
                 }
             }
             state.errorMessage?.let {

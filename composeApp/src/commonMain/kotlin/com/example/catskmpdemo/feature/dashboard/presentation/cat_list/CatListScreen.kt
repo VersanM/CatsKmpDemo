@@ -38,8 +38,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import catskmpdemo.composeapp.generated.resources.Res
+import catskmpdemo.composeapp.generated.resources.cat_content_description
+import catskmpdemo.composeapp.generated.resources.cat_title
+import catskmpdemo.composeapp.generated.resources.cats_title
 import coil3.compose.AsyncImage
 import com.example.catskmpdemo.feature.dashboard.domain.Cat
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun CatListScreenRoot(
@@ -83,7 +88,7 @@ fun CatListScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    "Cats",
+                    stringResource(Res.string.cats_title),
                     style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold)
                 )
             }
@@ -156,7 +161,7 @@ private fun CatCard(
         ) {
             AsyncImage(
                 model = cat.url,
-                contentDescription = "Cat ${cat.id}",
+                contentDescription = stringResource(Res.string.cat_content_description, cat.id),
                 modifier = Modifier
                     .size(120.dp)
                     .clip(RoundedCornerShape(12.dp))
@@ -170,7 +175,7 @@ private fun CatCard(
                     .padding(end = 8.dp)
             ) {
                 Text(
-                    text = "Cat #${cat.id}",
+                    text = stringResource(Res.string.cat_title, cat.id),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold
                 )

@@ -1,0 +1,9 @@
+<resources>
+    <string name="cats_title">Cats</string>
+    <string name="cat_title">Cat #%1$s</string>
+    <string name="cat_content_description">Cat %1$s</string>
+    <string name="login_title">Login</string>
+    <string name="email_label">Email</string>
+    <string name="password_label">Password</string>
+    <string name="login_action">Login</string>
+</resources>
