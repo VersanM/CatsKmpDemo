@@ -1,5 +1,6 @@
 package com.example.catskmpdemo.feature.dashboard.presentation.cat_list
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,6 +16,9 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Snackbar
@@ -27,6 +31,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.example.catskmpdemo.feature.dashboard.domain.Cat
@@ -69,12 +76,16 @@ fun CatListScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(8.dp),
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("Cats", style = MaterialTheme.typography.headlineSmall)
+                Text(
+                    "Cats",
+                    style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold)
+                )
             }
+
             if (state.isLoading && state.cats.isEmpty()) {
                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator()
@@ -87,11 +98,11 @@ fun CatListScreen(
                 ) {
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                        contentPadding = PaddingValues(12.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         items(state.cats) { cat ->
-                            CatRow(
+                            CatCard(
                                 cat = cat,
                                 onClick = { onAction(CatListAction.OnCatClick(cat)) }
                             )
@@ -100,6 +111,7 @@ fun CatListScreen(
                 }
             }
         }
+
         state.errorMessage?.let { msg ->
             Box(
                 Modifier
@@ -114,35 +126,52 @@ fun CatListScreen(
 }
 
 @Composable
-private fun CatRow(
+private fun CatCard(
     cat: Cat,
     onClick: () -> Unit
 ) {
-    Row(
+    Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(12.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .clickable(onClick = onClick),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
-        AsyncImage(
-            model = cat.url,
-            contentDescription = "Cat ${cat.id}",
+        Row(
             modifier = Modifier
-                .size(96.dp)
-        )
-        Column(Modifier.weight(1f)) {
-            Text(text = "ID: ${cat.id}", style = MaterialTheme.typography.bodyLarge)
-            Text(
-                text = "Size: ${cat.width}x${cat.height}",
-                style = MaterialTheme.typography.bodySmall
+                .fillMaxWidth()
+                .padding(12.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            AsyncImage(
+                model = cat.url,
+                contentDescription = "Cat ${cat.id}",
+                modifier = Modifier
+                    .size(120.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(MaterialTheme.colorScheme.surfaceVariant),
+                contentScale = ContentScale.Crop
             )
-            if (cat.breeds.isNotEmpty()) {
+
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 8.dp)
+            ) {
                 Text(
-                    text = "Breeds: ${cat.breeds.joinToString { it.name }}",
-                    style = MaterialTheme.typography.bodySmall
+                    text = "Cat #${cat.id}",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold
                 )
+
+                if (cat.breeds.isNotEmpty()) {
+                    Text(
+                        text = cat.breeds.joinToString { it.name },
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
         }
     }
